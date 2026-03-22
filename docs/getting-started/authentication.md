@@ -54,7 +54,7 @@ curl -X GET "https://api.copa.rw/api/v1/cooperatives" \
 
 ## Scopes
 
-API keys are granted specific scopes that control access:
+API keys are granted specific scopes that control access. Each endpoint requires a specific scope — if your key doesn't have it, you'll get a `403 Forbidden` error.
 
 | Scope | Permission |
 |-------|------------|
@@ -66,10 +66,13 @@ API keys are granted specific scopes that control access:
 | `loans:write` | Create/update loans |
 | `payments:read` | Read payment data |
 | `payments:write` | Create/update payments |
+| `webhooks:receive` | Receive webhook events |
 
 :::info
 Most partner integrations only need `cooperatives:read` and `members:read` scopes.
 :::
+
+For detailed information about how permissions work, see [Permissions & Scopes](/getting-started/permissions).
 
 ## Security Best Practices
 
@@ -95,4 +98,5 @@ Most partner integrations only need `cooperatives:read` and `members:read` scope
 
 ## Next Steps
 
+- [Permissions & Scopes](/getting-started/permissions) — Understand scope requirements
 - [Quickstart](/getting-started/quickstart) — Make your first API call

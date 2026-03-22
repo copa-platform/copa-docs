@@ -14,6 +14,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'getting-started/introduction',
         'getting-started/authentication',
+        'getting-started/permissions',
         'getting-started/quickstart',
       ],
     },
