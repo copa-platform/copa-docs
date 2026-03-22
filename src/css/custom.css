@@ -1,0 +1,129 @@
+/**
+ * COPA API Documentation - Custom Styles
+ * Primary color: #0d6efd (COPA Blue)
+ */
+
+:root {
+  --ifm-color-primary: #0d6efd;
+  --ifm-color-primary-dark: #0b5ed7;
+  --ifm-color-primary-darker: #0a58ca;
+  --ifm-color-primary-darkest: #084298;
+  --ifm-color-primary-light: #3d8bfd;
+  --ifm-color-primary-lighter: #6ea8fe;
+  --ifm-color-primary-lightest: #9ec5fe;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --docusaurus-highlighted-code-line-bg: rgba(13, 110, 253, 0.1);
+  --ifm-background-color: #ffffff;
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-footer-background-color: #0a2540;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #6ea8fe;
+  --ifm-color-primary-dark: #3d8bfd;
+  --ifm-color-primary-darker: #0d6efd;
+  --ifm-color-primary-darkest: #0b5ed7;
+  --ifm-color-primary-light: #9ec5fe;
+  --ifm-color-primary-lighter: #c0d9fe;
+  --ifm-color-primary-lightest: #e7f0ff;
+  --docusaurus-highlighted-code-line-bg: rgba(110, 168, 254, 0.2);
+  --ifm-background-color: #0a2540;
+  --ifm-navbar-background-color: #0a2540;
+}
+
+/* Navbar styling */
+.navbar {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.navbar__title {
+  font-weight: 700;
+}
+
+/* API endpoint badges */
+.api-method {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-right: 0.5rem;
+}
+
+.api-method--get {
+  background-color: #198754;
+  color: white;
+}
+
+.api-method--post {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.api-method--put {
+  background-color: #fd7e14;
+  color: white;
+}
+
+.api-method--delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Code blocks */
+.prism-code {
+  font-size: 0.9rem;
+}
+
+/* Sidebar */
+.menu__link {
+  font-size: 0.9rem;
+}
+
+/* Cards for homepage */
+.feature-card {
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  transition: all 0.2s ease;
+}
+
+.feature-card:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+}
+
+/* Alert boxes */
+.alert--info {
+  --ifm-alert-background-color: rgba(13, 110, 253, 0.1);
+  --ifm-alert-border-color: #0d6efd;
+}
+
+/* Tables */
+table {
+  display: table;
+  width: 100%;
+}
+
+table th {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+/* Footer */
+.footer {
+  background-color: #0a2540;
+}
+
+.footer__title {
+  color: #ffffff;
+}
+
+.footer__link-item {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer__link-item:hover {
+  color: #ffffff;
+}
