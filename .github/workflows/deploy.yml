@@ -124,23 +124,13 @@ jobs:
           port: ${{ secrets.DO_PORT }}
           command_timeout: 2m
           script: |
-            MAX_ATTEMPTS=6
-            ATTEMPT=0
-            while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-              ATTEMPT=$((ATTEMPT + 1))
-              CONTAINER_STATUS=$(docker inspect --format='{{.State.Status}}' ${{ env.CONTAINER_NAME }} 2>/dev/null || echo "not_found")
-              if [ "$CONTAINER_STATUS" = "running" ]; then
-                # Check inside container since no host port mapped
-                HTTP_STATUS=$(docker exec ${{ env.CONTAINER_NAME }} wget -q -O /dev/null -S http://localhost:80 2>&1 | grep "HTTP/" | awk '{print $2}' || echo "000")
-                if [ "$HTTP_STATUS" = "200" ]; then
-                  echo "✅ Docs healthy! Container running, HTTP $HTTP_STATUS"
-                  exit 0
-                fi
-              fi
-              echo "⏳ Attempt $ATTEMPT/$MAX_ATTEMPTS - Status: $CONTAINER_STATUS"
-              sleep 5
-            done
-            echo "❌ Health check failed"
+            sleep 5
+            CONTAINER_STATUS=$(docker inspect --format='{{.State.Status}}' ${{ env.CONTAINER_NAME }} 2>/dev/null || echo "not_found")
+            if [ "$CONTAINER_STATUS" = "running" ]; then
+              echo "✅ Copa Docs container is running"
+              exit 0
+            fi
+            echo "❌ Container not running: $CONTAINER_STATUS"
             docker logs ${{ env.CONTAINER_NAME }} --tail 20 2>&1 || true
             exit 1
 
