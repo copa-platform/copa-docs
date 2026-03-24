@@ -128,12 +128,16 @@ jobs:
             ATTEMPT=0
             while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
               ATTEMPT=$((ATTEMPT + 1))
-              HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${{ env.DOCS_PORT }} --max-time 5 2>/dev/null || echo "000")
-              if [ "$HTTP_STATUS" = "200" ]; then
-                echo "✅ Docs healthy! HTTP $HTTP_STATUS"
-                exit 0
+              CONTAINER_STATUS=$(docker inspect --format='{{.State.Status}}' ${{ env.CONTAINER_NAME }} 2>/dev/null || echo "not_found")
+              if [ "$CONTAINER_STATUS" = "running" ]; then
+                # Check inside container since no host port mapped
+                HTTP_STATUS=$(docker exec ${{ env.CONTAINER_NAME }} wget -q -O /dev/null -S http://localhost:80 2>&1 | grep "HTTP/" | awk '{print $2}' || echo "000")
+                if [ "$HTTP_STATUS" = "200" ]; then
+                  echo "✅ Docs healthy! Container running, HTTP $HTTP_STATUS"
+                  exit 0
+                fi
               fi
-              echo "⏳ Attempt $ATTEMPT/$MAX_ATTEMPTS - HTTP $HTTP_STATUS"
+              echo "⏳ Attempt $ATTEMPT/$MAX_ATTEMPTS - Status: $CONTAINER_STATUS"
               sleep 5
             done
             echo "❌ Health check failed"
