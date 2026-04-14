@@ -159,22 +159,61 @@ jobs:
       - name: 📦 Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
-      - name: 📢 Slack Notification
+      - name: Gather deploy data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git log --no-merges --pretty=format:'%s' HEAD~10..HEAD > /tmp/direct_commits.txt
+          PR_NUMBERS=$(git log --merges --pretty=format:'%s' HEAD~10..HEAD | grep -oP '#\K[0-9]+' | sort -u || echo "")
+          for PR_NUM in $PR_NUMBERS; do
+            gh pr view "$PR_NUM" --json number,title,author 2>/dev/null >> /tmp/pr_data_raw.txt || true
+          done
+
+      - name: 📢 Slack - Success
         if: needs.deploy.result == 'success'
         continue-on-error: true
         run: |
-          COMMIT_MSG=$(git log -1 --pretty=format:'%s')
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          curl -X POST -H 'Content-type: application/json' \
-            --data "{
-              \"blocks\": [
-                {\"type\": \"header\", \"text\": {\"type\": \"plain_text\", \"text\": \"📚 Copa Docs Deployed\", \"emoji\": true}},
-                {\"type\": \"section\", \"fields\": [
-                  {\"type\": \"mrkdwn\", \"text\": \"*Version:*\n\`${{ needs.build.outputs.version }}\`\"},
-                  {\"type\": \"mrkdwn\", \"text\": \"*Commit:*\n\`${SHORT_SHA}\` — ${COMMIT_MSG}\"}
-                ]}
-              ]
-            }" \
-            ${{ secrets.SLACK_WEBHOOK_URL }}
+          python3 << 'PYEOF'
+          import json, requests
+          version = "${{ needs.build.outputs.version }}"
+          author = "${{ github.actor }}"
+          webhook = "${{ secrets.SLACK_WEBHOOK_URL }}"
+          workflow_url = "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          pr_blocks = []
+          try:
+              with open("/tmp/pr_data_raw.txt") as f:
+                  for line in f:
+                      if not line.strip(): continue
+                      try:
+                          pr = json.loads(line.strip())
+                          pr_blocks.append(f"• PR #{pr.get('number','?')} — {pr.get('title','')}")
+                      except: continue
+          except: pass
+          commits = []
+          try:
+              with open("/tmp/direct_commits.txt") as f:
+                  for line in f:
+                      msg = line.strip()
+                      if msg and not msg.startswith("Merge"):
+                          for p in ["feat: ","fix: ","docs: ","chore: "]:
+                              if msg.lower().startswith(p): msg = msg[len(p):]; break
+                          commits.append(f"• {msg[0].upper()+msg[1:]}" if msg else "")
+          except: pass
+          changes = "\n".join(pr_blocks[:5]) if pr_blocks else "\n".join(commits[:5]) if commits else "Routine updates"
+          blocks = [
+              {"type":"header","text":{"type":"plain_text","text":"Copa Docs — Deployed","emoji":True}},
+              {"type":"section","fields":[
+                  {"type":"mrkdwn","text":f"*Version:* `{version}`"},
+                  {"type":"mrkdwn","text":f"*By:* {author}"}
+              ]},
+              {"type":"section","text":{"type":"mrkdwn","text":changes}},
+              {"type":"actions","elements":[
+                  {"type":"button","text":{"type":"plain_text","text":"Docs","emoji":True},"url":"https://docs.copa.rw","style":"primary"},
+                  {"type":"button","text":{"type":"plain_text","text":"Workflow","emoji":True},"url":workflow_url}
+              ]}
+          ]
+          try: requests.post(webhook, json={"blocks":blocks}, timeout=10)
+          except: pass
+          PYEOF
