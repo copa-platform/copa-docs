@@ -165,8 +165,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git log --no-merges --pretty=format:'%s' HEAD~10..HEAD > /tmp/direct_commits.txt
-          PR_NUMBERS=$(git log --merges --pretty=format:'%s' HEAD~10..HEAD | grep -oP '#\K[0-9]+' | sort -u || echo "")
+          TOTAL_COMMITS=$(git rev-list --count HEAD 2>/dev/null || echo "1")
+          RANGE_SIZE=$((TOTAL_COMMITS < 10 ? TOTAL_COMMITS : 10))
+          git log --no-merges --pretty=format:'%s' -${RANGE_SIZE} > /tmp/direct_commits.txt
+          PR_NUMBERS=$(git log --merges --pretty=format:'%s' -${RANGE_SIZE} | grep -oP '#\K[0-9]+' | sort -u || echo "")
           for PR_NUM in $PR_NUMBERS; do
             gh pr view "$PR_NUM" --json number,title,author 2>/dev/null >> /tmp/pr_data_raw.txt || true
           done
