@@ -17,11 +17,16 @@ https://api.copa.rw/api/v1/
 
 | Method | Endpoint | Description | Scope |
 |--------|----------|-------------|-------|
-| `GET` | `/cooperatives` | List all cooperatives | `cooperatives:read` |
-| `GET` | `/cooperatives/{id}` | Get cooperative by ID | `cooperatives:read` |
-| `GET` | `/cooperatives/{id}/members` | List cooperative members | `members:read` |
-| `GET` | `/members` | List all members | `members:read` |
-| `GET` | `/members/{id}` | Get member by ID | `members:read` |
+| `GET` | `/cooperatives/` | List all cooperatives | `cooperatives:read` |
+| `GET` | `/cooperatives/{id}/` | Get cooperative by ID | `cooperatives:read` |
+| `GET` | `/cooperatives/{id}/members/` | List cooperative members | `members:read` |
+| `GET` | `/members/{nid}/` | Aggregated member record across coops | `members:read` (+ `members:financials` for financial blocks) |
+| `GET` | `/cooperatives/{coop_id}/members/{nid}/` | Single membership for one coop | `members:read` (+ `members:financials`) |
+| `GET` | `/members/?identity_card=…` | List members filtered by NID | `members:read` |
+| `GET` | `/stock-entries/` | Production records, paginated, max 90-day window | `production:read` |
+| `GET` | `/cooperatives/{coop_id}/production-analytics/` | Aggregated production for one coop | `analytics:read` |
+| `GET` | `/financials/dashboard/` | Revenue / expenses / payouts summary | `financials:read` |
+| `GET` | `/financials/balance-sheet/` | Assets, liabilities, equity at a date | `financials:read` |
 
 ## Request Headers
 
