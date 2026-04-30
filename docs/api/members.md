@@ -18,7 +18,7 @@ Returns every cooperative the NID belongs to, plus optional financial blocks per
 ### Request
 
 ```bash
-curl -X GET "https://api.copa.rw/api/v1/members/1199680022162201/" \
+curl -X GET "https://api.copa.rw/api/v1/members/{NID_PLACEHOLDER}/" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -32,51 +32,51 @@ curl -X GET "https://api.copa.rw/api/v1/members/1199680022162201/" \
 
 ```json
 {
-  "identity_card": "1199680022162201",
-  "primary_full_name": "MUKUNDIREHE EZECHIEL",
-  "name_variants": ["MUKUNDIREHE EZECHIEL"],
+  "identity_card": "NID_PLACEHOLDER",
+  "primary_full_name": "FULL_NAME_PLACEHOLDER",
+  "name_variants": ["NAME_VARIANT_1"],
   "gender": "Male",
-  "date_of_birth": "1968-01-01",
-  "mobile": "+250788000000",
+  "date_of_birth": "YYYY-MM-DD",
+  "mobile": "PHONE_PLACEHOLDER",
   "memberships": [
     {
-      "cooperative": { "id": "...", "code": "COOP102073598", "name": "COTHEGAB" },
-      "member_code": "054",
-      "full_name": "MUKUNDIREHE EZECHIEL",
-      "first_name": "MUKUNDIREHE",
-      "last_name": "EZECHIEL",
+      "cooperative": { "id": "COOP_ID_PLACEHOLDER", "code": "COOP_CODE_1", "name": "Cooperative One" },
+      "member_code": "MEMBER_CODE_PLACEHOLDER",
+      "full_name": "FULL_NAME_PLACEHOLDER",
+      "first_name": "FIRST_NAME_PLACEHOLDER",
+      "last_name": "LAST_NAME_PLACEHOLDER",
       "role": "MEMBER",
       "status": "active",
-      "registration_date": "2018-06-19T22:00:00+00:00",
-      "mobile": "+250788000000",
+      "registration_date": "YYYY-MM-DDTHH:MM:SS+00:00",
+      "mobile": "PHONE_PLACEHOLDER",
       "production_summary": {
         "window_days": 365,
         "entries_count": 42,
         "total_kg": "1180.500",
-        "last_delivery_at": "2026-04-29T08:30:00+00:00"
+        "last_delivery_at": "YYYY-MM-DDTHH:MM:SS+00:00"
       },
       "loan_history": [
         {
-          "id": "...",
+          "id": "LOAN_ID_PLACEHOLDER",
           "amount": "50000.00",
           "interest_rate": "5.00",
           "status": "approved",
           "paid_amount": "20000.00",
-          "loan_start_date": "2026-01-15T08:00:00+00:00",
-          "loan_end_date": "2026-07-15T08:00:00+00:00",
-          "approved_at": "2026-01-15T08:00:00+00:00"
+          "loan_start_date": "YYYY-MM-DDTHH:MM:SS+00:00",
+          "loan_end_date": "YYYY-MM-DDTHH:MM:SS+00:00",
+          "approved_at": "YYYY-MM-DDTHH:MM:SS+00:00"
         }
       ],
       "savings_summary": {
         "accounts_count": 1,
         "total_contributions_rwf": "75000.00",
         "total_withdrawals_rwf": "0.00",
-        "last_transaction_at": "2026-04-15T10:00:00+00:00"
+        "last_transaction_at": "YYYY-MM-DDTHH:MM:SS+00:00"
       }
     },
     {
-      "cooperative": { "id": "...", "code": "70000888", "name": "COTHEGIM" },
-      "member_code": "A12",
+      "cooperative": { "id": "COOP_ID_PLACEHOLDER_2", "code": "COOP_CODE_2", "name": "Cooperative Two" },
+      "member_code": "MEMBER_CODE_PLACEHOLDER_2",
       "role": "MEMBER",
       "status": "active",
       "production_summary": null,
@@ -127,7 +127,7 @@ Returns a single canonical membership when you already know which cooperative yo
 ### Request
 
 ```bash
-curl -X GET "https://api.copa.rw/api/v1/cooperatives/COOP102073598/members/1199680022162201/" \
+curl -X GET "https://api.copa.rw/api/v1/cooperatives/{COOP_ID_PLACEHOLDER}/members/{NID_PLACEHOLDER}/" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -154,7 +154,7 @@ Pre-aggregation list view that returns one row per `(NID × cooperative)`. Use t
 ### Request
 
 ```bash
-curl -X GET "https://api.copa.rw/api/v1/members/?identity_card=1199680022162201" \
+curl -X GET "https://api.copa.rw/api/v1/members/?identity_card={NID_PLACEHOLDER}" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -175,16 +175,16 @@ curl -X GET "https://api.copa.rw/api/v1/members/?identity_card=1199680022162201"
   "previous": null,
   "results": [
     {
-      "id": "...",
-      "member_code": "054",
-      "full_name": "MUKUNDIREHE EZECHIEL",
-      "identity_card": "1199680022162201",
-      "mobile": "+250788000000",
+      "id": "MEMBER_ID_PLACEHOLDER",
+      "member_code": "MEMBER_CODE_PLACEHOLDER",
+      "full_name": "FULL_NAME_PLACEHOLDER",
+      "identity_card": "NID_PLACEHOLDER",
+      "mobile": "PHONE_PLACEHOLDER",
       "gender": "Male",
       "role": "MEMBER",
       "status": "active",
-      "cooperative": { "id": "...", "name": "COTHEGAB", "code": "COOP102073598" },
-      "registration_date": "2018-06-19T22:00:00+00:00"
+      "cooperative": { "id": "COOP_ID_PLACEHOLDER", "name": "Cooperative One", "code": "COOP_CODE_1" },
+      "registration_date": "YYYY-MM-DDTHH:MM:SS+00:00"
     }
   ]
 }

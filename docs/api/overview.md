@@ -24,7 +24,7 @@ https://api.copa.rw/api/v1/
 | `GET` | `/cooperatives/{coop_id}/members/{nid}/` | Single membership for one coop | `members:read` (+ `members:financials`) |
 | `GET` | `/members/?identity_card=…` | List members filtered by NID | `members:read` |
 | `GET` | `/stock-entries/` | Production records, paginated, max 90-day window | `production:read` |
-| `GET` | `/cooperatives/{id}/production-analytics/` | Aggregated production for one coop | `analytics:read` |
+| `GET` | `/cooperatives/{coop_id}/production-analytics/` | Aggregated production for one coop | `analytics:read` |
 | `GET` | `/financials/dashboard/` | Revenue / expenses / payouts summary | `financials:read` |
 | `GET` | `/financials/balance-sheet/` | Assets, liabilities, equity at a date | `financials:read` |
 

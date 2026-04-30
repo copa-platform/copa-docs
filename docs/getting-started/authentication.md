@@ -90,10 +90,13 @@ For deeper detail on what each scope unlocks, see [Permissions & Scopes](/gettin
 
 | Status | Body | Cause |
 |---|---|---|
-| `401` | `{"detail": "Invalid API key"}` | Bearer key not recognised, inactive, or revoked |
-| `401` | `{"detail": "API key expired"}` | The key was past its `expires_at` |
-| `401` | `{"detail": "API key revoked"}` | The key was explicitly revoked by COPA staff |
-| `403` | `{"detail": "Permission denied"}` | The key authenticates but lacks the scope this endpoint requires |
+| `401` | `{"detail": "Invalid API key"}` | Bearer key not recognised, inactive, or revoked. |
+| `401` | `{"detail": "API key expired"}` | The key was past its `expires_at`. |
+| `403` | `{"detail": "Permission denied"}` | The key authenticates but lacks the scope this endpoint requires. |
+
+:::note
+Revoked and inactive keys return the same `401 Invalid API key` response as keys we never issued — we don't disclose whether a specific key once existed.
+:::
 
 ## Next steps
 

@@ -17,7 +17,7 @@ Paginated production-record log for cooperative deliveries. Each entry links to 
 
 ```bash
 curl -X GET \
-  "https://api.copa.rw/api/v1/stock-entries/?cooperative_id=73mcoo8tg&from=2026-01-01&to=2026-04-30&page_size=50" \
+  "https://api.copa.rw/api/v1/stock-entries/?cooperative_id=73mcoo8tg&from=2026-02-01&to=2026-04-30&page_size=50" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -54,12 +54,12 @@ The endpoint enforces a **90-day window cap**. Requests with a wider `from`/`to`
       "estimated_value": "49200.00",
       "product": { "id": "3hkfckqc6", "name": "Amata" },
       "member": {
-        "id": "...",
-        "identity_card": "1199680022162201",
-        "member_code": "054",
-        "full_name": "MUKUNDIREHE EZECHIEL"
+        "id": "MEMBER_ID_PLACEHOLDER",
+        "identity_card": "NID_PLACEHOLDER",
+        "member_code": "MEMBER_CODE_PLACEHOLDER",
+        "full_name": "FULL_NAME_PLACEHOLDER"
       },
-      "cooperative": { "id": "73mcoo8tg", "code": "122", "name": "COOP THE Test" }
+      "cooperative": { "id": "COOP_ID_PLACEHOLDER", "code": "COOP_CODE_1", "name": "Cooperative One" }
     }
   ]
 }
