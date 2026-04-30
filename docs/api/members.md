@@ -5,175 +5,187 @@ title: Members
 
 # Members API
 
-Access cooperative member data.
+Look up cooperative members by **National ID** (NID). The same person can legitimately belong to more than one cooperative — for example, a coffee coop and a savings coop — so the canonical member endpoint returns one consolidated record per NID with a `memberships[]` array.
 
-## The Member Object
+## Get member by NID (aggregate)
+
+<span class="api-method api-method--get">GET</span> `/members/{nid}/`
+
+Returns every cooperative the NID belongs to, plus optional financial blocks per membership.
+
+**Required scope:** `members:read`. Add `members:financials` to populate `production_summary`, `loan_history`, and `savings_summary` (otherwise those fields are returned as `null`).
+
+### Request
+
+```bash
+curl -X GET "https://api.copa.rw/api/v1/members/1199680022162201/" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Path parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `nid` | string | Rwandan national ID (16 digits). |
+
+### Response
 
 ```json
 {
-  "id": "123e4567-e89b-12d3-a456-426614174000",
-  "member_code": "MEM001",
-  "full_name": "Jean Uwimana",
-  "first_name": "Jean",
-  "last_name": "Uwimana",
-  "identity_card": "1199880012345678",
-  "mobile": "0788123456",
+  "identity_card": "1199680022162201",
+  "primary_full_name": "MUKUNDIREHE EZECHIEL",
+  "name_variants": ["MUKUNDIREHE EZECHIEL"],
   "gender": "Male",
-  "role": "Member",
-  "status": "Active",
-  "cooperative": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Koperative y'Abahinzi",
-    "code": "COOP001"
-  },
-  "registration_date": "2024-01-20T08:00:00Z",
-  "created_at": "2024-01-20T08:00:00Z"
+  "date_of_birth": "1968-01-01",
+  "mobile": "+250788000000",
+  "memberships": [
+    {
+      "cooperative": { "id": "...", "code": "COOP102073598", "name": "COTHEGAB" },
+      "member_code": "054",
+      "full_name": "MUKUNDIREHE EZECHIEL",
+      "first_name": "MUKUNDIREHE",
+      "last_name": "EZECHIEL",
+      "role": "MEMBER",
+      "status": "active",
+      "registration_date": "2018-06-19T22:00:00+00:00",
+      "mobile": "+250788000000",
+      "production_summary": {
+        "window_days": 365,
+        "entries_count": 42,
+        "total_kg": "1180.500",
+        "last_delivery_at": "2026-04-29T08:30:00+00:00"
+      },
+      "loan_history": [
+        {
+          "id": "...",
+          "amount": "50000.00",
+          "interest_rate": "5.00",
+          "status": "approved",
+          "paid_amount": "20000.00",
+          "loan_start_date": "2026-01-15T08:00:00+00:00",
+          "loan_end_date": "2026-07-15T08:00:00+00:00",
+          "approved_at": "2026-01-15T08:00:00+00:00"
+        }
+      ],
+      "savings_summary": {
+        "accounts_count": 1,
+        "total_contributions_rwf": "75000.00",
+        "total_withdrawals_rwf": "0.00",
+        "last_transaction_at": "2026-04-15T10:00:00+00:00"
+      }
+    },
+    {
+      "cooperative": { "id": "...", "code": "70000888", "name": "COTHEGIM" },
+      "member_code": "A12",
+      "role": "MEMBER",
+      "status": "active",
+      "production_summary": null,
+      "loan_history": null,
+      "savings_summary": null
+    }
+  ]
 }
 ```
 
-### Attributes
+### Top-level fields
 
 | Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique identifier (UUID) |
-| `member_code` | string | Member code within cooperative |
-| `full_name` | string | Full name |
-| `first_name` | string | First name |
-| `last_name` | string | Last name |
-| `identity_card` | string | National ID number |
-| `mobile` | string | Phone number |
-| `gender` | string | Gender (Male/Female) |
-| `role` | string | Role in cooperative |
-| `status` | string | Membership status |
-| `cooperative` | object | Associated cooperative |
-| `registration_date` | datetime | Membership registration date |
-| `created_at` | datetime | Record creation timestamp |
+|---|---|---|
+| `identity_card` | string | The NID you queried. |
+| `primary_full_name` | string | Name from the most recent registration. |
+| `name_variants` | array&lt;string&gt; | All distinct full-name spellings across coops. Useful for flagging mismatches. |
+| `gender`, `date_of_birth`, `mobile` | string \| null | Best-effort across memberships. |
+| `memberships` | array | One entry per cooperative the NID belongs to. |
 
-### Status Values
+### Membership fields
 
-| Status | Description |
-|--------|-------------|
-| `Active` | Active member |
-| `Inactive` | Inactive member |
-| `Suspended` | Suspended membership |
-| `Pending` | Pending approval |
-
----
-
-## List Members
-
-<span class="api-method api-method--get">GET</span> `/members`
-
-Returns a list of all members across cooperatives.
-
-**Required Scope:** `members:read`
-
-### Request
-
-```bash
-curl -X GET "https://api.copa.rw/api/v1/members" \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-### Query Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `status` | string | Filter by status |
-| `gender` | string | Filter by gender |
-| `page` | integer | Page number |
-| `page_size` | integer | Items per page |
-
-### Response
-
-```json
-[
-  {
-    "id": "123e4567-e89b-12d3-a456-426614174000",
-    "member_code": "MEM001",
-    "full_name": "Jean Uwimana",
-    "first_name": "Jean",
-    "last_name": "Uwimana",
-    "identity_card": "1199880012345678",
-    "mobile": "0788123456",
-    "gender": "Male",
-    "role": "Member",
-    "status": "Active",
-    "cooperative": {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "name": "Koperative y'Abahinzi",
-      "code": "COOP001"
-    },
-    "registration_date": "2024-01-20T08:00:00Z",
-    "created_at": "2024-01-20T08:00:00Z"
-  }
-]
-```
-
----
-
-## Get Member
-
-<span class="api-method api-method--get">GET</span> `/members/{id}`
-
-Returns a single member by ID.
-
-**Required Scope:** `members:read`
-
-### Request
-
-```bash
-curl -X GET "https://api.copa.rw/api/v1/members/123e4567-e89b-12d3-a456-426614174000" \
-  -H "Authorization: Bearer YOUR_API_KEY"
-```
-
-### Path Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `id` | string | Member UUID |
-
-### Response
-
-```json
-{
-  "id": "123e4567-e89b-12d3-a456-426614174000",
-  "member_code": "MEM001",
-  "full_name": "Jean Uwimana",
-  "first_name": "Jean",
-  "last_name": "Uwimana",
-  "identity_card": "1199880012345678",
-  "mobile": "0788123456",
-  "gender": "Male",
-  "role": "Member",
-  "status": "Active",
-  "cooperative": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Koperative y'Abahinzi",
-    "code": "COOP001"
-  },
-  "registration_date": "2024-01-20T08:00:00Z",
-  "created_at": "2024-01-20T08:00:00Z"
-}
-```
+| Field | Type | Notes |
+|---|---|---|
+| `cooperative` | object | `{id, code, name}` |
+| `member_code` | string | The cooperative's own code for the member. |
+| `role`, `status`, `registration_date` | varies | |
+| `production_summary` | object \| null | Last-365-days `entries_count`, `total_kg`, `last_delivery_at`. **Requires `members:financials`**. |
+| `loan_history` | array \| null | Latest 10 loans with `paid_amount`. **Requires `members:financials`**. |
+| `savings_summary` | object \| null | `accounts_count`, total contributions / withdrawals, last transaction date. **Requires `members:financials`**. |
 
 ### Errors
 
 | Status | Description |
-|--------|-------------|
-| `404` | Member not found |
+|---|---|
+| `404` | No active membership found for that NID anywhere in the system. |
 
 ---
 
-## Search Members by National ID
+## Get member in a specific cooperative
 
-To find a member by national ID, filter the members list:
+<span class="api-method api-method--get">GET</span> `/cooperatives/{coop_id}/members/{nid}/`
+
+Returns a single canonical membership when you already know which cooperative you're querying. Useful for partners that only service one coop and don't need the cross-coop view.
+
+**Required scope:** `members:read`. `members:financials` unlocks the production / loans / savings blocks.
+
+### Request
 
 ```bash
-curl -X GET "https://api.copa.rw/api/v1/members?identity_card=1199880012345678" \
+curl -X GET "https://api.copa.rw/api/v1/cooperatives/COOP102073598/members/1199680022162201/" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
-:::tip
-This is useful for verifying if a person is a registered cooperative member.
-:::
+### Response
+
+The response is the **single membership object** described above (cooperative, member_code, role, status, financial blocks). Same field semantics as a single entry of `memberships[]` in the aggregate endpoint.
+
+### Errors
+
+| Status | Description |
+|---|---|
+| `404` | No active membership for that NID inside the supplied cooperative. |
+
+---
+
+## List members filtered by NID
+
+<span class="api-method api-method--get">GET</span> `/members/?identity_card={nid}`
+
+Pre-aggregation list view that returns one row per `(NID × cooperative)`. Use the [aggregate endpoint](#get-member-by-nid-aggregate) above when you want the consolidated record.
+
+**Required scope:** `members:read`.
+
+### Request
+
+```bash
+curl -X GET "https://api.copa.rw/api/v1/members/?identity_card=1199680022162201" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Query parameters
+
+| Parameter | Type | Description |
+|---|---|---|
+| `identity_card` | string | Filter by NID. Optional but recommended — without it the endpoint returns every member, paginated. |
+| `page` | integer | Page number. |
+| `page_size` | integer | Items per page. |
+
+### Response
+
+```json
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "...",
+      "member_code": "054",
+      "full_name": "MUKUNDIREHE EZECHIEL",
+      "identity_card": "1199680022162201",
+      "mobile": "+250788000000",
+      "gender": "Male",
+      "role": "MEMBER",
+      "status": "active",
+      "cooperative": { "id": "...", "name": "COTHEGAB", "code": "COOP102073598" },
+      "registration_date": "2018-06-19T22:00:00+00:00"
+    }
+  ]
+}
+```

@@ -23,25 +23,32 @@ Every endpoint requires a specific scope. If your API key doesn't have the requi
 
 | Scope | Permission | Endpoints |
 |-------|------------|-----------|
-| `cooperatives:read` | Read cooperative data | `GET /cooperatives`, `GET /cooperatives/{id}` |
-| `cooperatives:write` | Create/update cooperatives | `POST /cooperatives`, `PUT /cooperatives/{id}` |
-| `members:read` | Read member data | `GET /members`, `GET /members/{id}`, `GET /cooperatives/{id}/members` |
-| `members:write` | Create/update members | `POST /members`, `PUT /members/{id}` |
-| `loans:read` | Read loan data | `GET /loans` (coming soon) |
-| `loans:write` | Create/update loans | `POST /loans` (coming soon) |
-| `payments:read` | Read payment data | `GET /payments` (coming soon) |
-| `payments:write` | Create/update payments | `POST /payments` (coming soon) |
+| `cooperatives:read` | Read cooperative data | `GET /cooperatives/`, `GET /cooperatives/{id}/` |
+| `members:read` | Read member identity / role / cooperative | `GET /members/{nid}/`, `GET /cooperatives/{id}/members/{nid}/`, `GET /members/?identity_card=…`, `GET /cooperatives/{id}/members/` |
+| `members:financials` | Unlocks production / loans / savings blocks on member responses | (modifier — see Members API) |
+| `production:read` | Read stock entries | `GET /stock-entries/` |
+| `analytics:read` | Read production analytics | `GET /cooperatives/{id}/production-analytics/` |
+| `financials:read` | Read cooperative financial summaries | `GET /financials/dashboard/`, `GET /financials/balance-sheet/` |
 | `webhooks:receive` | Receive webhook events | Webhook endpoints |
+
+:::info Read-only API today
+The integrations API is currently read-only. Write scopes (`cooperatives:write`, `members:write`, etc.) are reserved for future endpoints; today's keys do not need them.
+:::
 
 ## Endpoint Scope Requirements
 
 | Method | Endpoint | Required Scope |
 |--------|----------|----------------|
-| `GET` | `/cooperatives` | `cooperatives:read` |
-| `GET` | `/cooperatives/{id}` | `cooperatives:read` |
-| `GET` | `/cooperatives/{id}/members` | `members:read` |
-| `GET` | `/members` | `members:read` |
-| `GET` | `/members/{id}` | `members:read` |
+| `GET` | `/cooperatives/` | `cooperatives:read` |
+| `GET` | `/cooperatives/{id}/` | `cooperatives:read` |
+| `GET` | `/cooperatives/{id}/members/` | `members:read` |
+| `GET` | `/members/{nid}/` | `members:read` (financial blocks gated on `members:financials`) |
+| `GET` | `/cooperatives/{coop_id}/members/{nid}/` | `members:read` (same gating) |
+| `GET` | `/members/?identity_card=…` | `members:read` |
+| `GET` | `/stock-entries/` | `production:read` |
+| `GET` | `/cooperatives/{id}/production-analytics/` | `analytics:read` |
+| `GET` | `/financials/dashboard/` | `financials:read` |
+| `GET` | `/financials/balance-sheet/` | `financials:read` |
 
 ## Permission Errors
 
@@ -79,10 +86,11 @@ When requesting an API key, specify which scopes you need:
 
 | Use Case | Recommended Scopes |
 |----------|-------------------|
-| Read-only integration | `cooperatives:read`, `members:read` |
-| Cooperative management | `cooperatives:read`, `cooperatives:write` |
-| Member management | `members:read`, `members:write` |
-| Full access | All scopes (rarely needed) |
+| KYC lookup (bank verifying a person is in any coop) | `members:read` |
+| Bank with full member view | `members:read`, `members:financials` |
+| Production reporting | `production:read`, `analytics:read` |
+| Financial regulator (BNR-style) | `cooperatives:read`, `members:read`, `members:financials`, `production:read`, `analytics:read`, `financials:read` |
+| Read-only catalogue | `cooperatives:read` |
 
 :::tip Best Practice
 Request only the scopes you need. This follows the principle of least privilege and improves security.

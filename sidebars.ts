@@ -26,6 +26,9 @@ const sidebars: SidebarsConfig = {
         'api/overview',
         'api/cooperatives',
         'api/members',
+        'api/stock-entries',
+        'api/production-analytics',
+        'api/financials',
       ],
     },
     {
